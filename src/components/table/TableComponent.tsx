@@ -10,12 +10,11 @@ interface TableComponentProps {
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({ page, pages, items, setPage }) => {
-  console.log(items)
   return (
     <>
-    <Table className="max-w-[300px] mx-auto text-center " removeWrapper aria-label="Example static collection table"
+    <Table className="max-w-[300px] h-72 mx-auto text-center " removeWrapper aria-label="Example static collection table"
     bottomContent={
-      pages > 0 && <div className="flex w-full justify-center">
+      pages > 1 && <div className="flex w-full justify-center">
         <Pagination
           isCompact
           showControls

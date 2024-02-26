@@ -20,10 +20,10 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-center p-24 font-['Anta']">
         <h1 className="text-5xl">{'Global balance: ' + globalBalance}</h1>
         <div className="bg-gray-600 w-4/5 mt-5 min-h-[75vh] rounded-lg p-5">
-        <Tabs variant='solid' className="" color="warning" aria-label="Tabs variants">
+        <Tabs variant='solid' color="warning" aria-label="Tabs variants">
         {Object.keys(balances).map((balanceName, index) => (
             <Tab key={balanceName} className="font-bold" title={balanceName}>
-            <Card className="bg-transparent p-5">
+            <Card className="bg-transparent p-5 ">
               <CardBody  >
                 <BalanceComponent balanceKey={balanceName}/>
               </CardBody>

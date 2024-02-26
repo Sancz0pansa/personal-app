@@ -46,7 +46,7 @@ export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const handleAddBalance = (name: string) => {
     setBalances({ ...balances, [name]: 0 });
-    setBalanceHistories({ ...balanceHistories, [name]: [] }); // Add an empty array for the new balance
+    setBalanceHistories({ ...balanceHistories, [name]: [] }); 
   };
 
   const dispatch = (key: string, action: BalanceAction) => {
@@ -72,7 +72,12 @@ export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setBalanceHistories((prev) => {
       const updated = { ...prev };
 
-      
+      if (action.type === 'UNDO') {
+        updated[key] = [];
+        localStorage.setItem('balanceHistories', JSON.stringify(updated));
+        return updated;
+      }
+
       updated[key] = [...(updated[key] || []), { action: {...action, amount: action.type === 'SUBTRACT' ? -action.amount : action.amount}, saldo: balances[key] + (action.type === 'SUBTRACT' ? -action.amount : action.amount) }];
       localStorage.setItem('balanceHistories', JSON.stringify(updated));
       return updated;

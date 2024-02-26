@@ -10,6 +10,8 @@ const BalanceComponent: React.FC<{ balanceKey: string }> = ({ balanceKey }) => {
   const balance = balances[balanceKey] || 0;
   const history = balanceHistories[balanceKey] || [];
 
+  const reversedHistory = [...history].reverse();
+
   const [selectedPage, setSelectedPage] = useState(1);
 
   const [costs, setCosts] = useState('');
@@ -18,7 +20,7 @@ const BalanceComponent: React.FC<{ balanceKey: string }> = ({ balanceKey }) => {
   const itemsPerPage = 5;
   const startIndex = (selectedPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = history.slice(startIndex, endIndex);
+  const currentItems = reversedHistory.slice(startIndex, endIndex);
 
   const pages = Math.ceil(history.length / itemsPerPage);
   const handleSubmit = () => {
@@ -97,7 +99,6 @@ const BalanceComponent: React.FC<{ balanceKey: string }> = ({ balanceKey }) => {
         </div>
       </div>
       <div className="mt-4">
-        {/* Render your history here */}
         <TableComponent pages={pages} items={currentItems} setPage={setSelectedPage} page={selectedPage}/>
       </div>
     </>
