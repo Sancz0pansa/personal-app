@@ -9,6 +9,9 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      'sans': ["Anta", 'system-ui'],
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -20,6 +23,12 @@ const config: Config = {
           50: '#27272a',
 
         },
+      },
+      textShadow: {
+        DEFAULT: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+        // You can define multiple text-shadow utilities here
+        // 'sm': '1px 1px 2px rgba(0, 0, 0, 0.2)',
+        // 'lg': '4px 4px 6px rgba(0, 0, 0, 0.4)',
       },
     },
   },

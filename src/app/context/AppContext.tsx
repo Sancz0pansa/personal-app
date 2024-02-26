@@ -1,18 +1,14 @@
-"use client"
-import React, { createContext, useContext, useReducer, useState, useEffect } from 'react';
+'use client'
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { BalanceAction } from '../types/balanceAction';
 
 interface BalanceContextType {
-  balance: number;
-  balanceHistory: any[]; // Adjust type as needed
-  costs: string;
-  setCosts: React.Dispatch<React.SetStateAction<string>>;
-  income: string;
-  setIncome: React.Dispatch<React.SetStateAction<string>>;
-  stepsAmount: number;
-  setStepsAmount: React.Dispatch<React.SetStateAction<number>>;
-  dispatch: React.Dispatch<BalanceAction>;
-  setBalanceHistory: React.Dispatch<React.SetStateAction<any[]>>; // Adjust type as needed
+  balances: { [key: string]: number };
+  balanceHistories: { [key: string]: any[] };
+  dispatch: (key: string, action: BalanceAction) => void;
+  handleAddBalance: (name: string) => void;
+  globalBalance: number;
+  deleteBalance: (key: string) => void;
 }
 
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
@@ -25,56 +21,87 @@ export const useBalanceContext = (): BalanceContextType => {
   return context;
 };
 
-const balanceReducer = (state: number, action: BalanceAction) => {
-  switch (action.type) {
-    case 'ADD':
-      return state + action.amount;
-    case 'SUBTRACT':
-      return state - action.amount;
-    case 'UNDO':
-      return action.amount;
-    default:
-      return state;
-  }
-};
-
 export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [balance, dispatch] = useReducer(balanceReducer, 0);
-  const [balanceHistory, setBalanceHistory] = useState<any[]>([]); // Adjust type as needed
-  const [costs, setCosts] = useState('');
-  const [income, setIncome] = useState('');
-  const [stepsAmount, setStepsAmount] = useState(0);
-  const [isFirstRender, setIsFirstRender] = useState(true); 
+  const [balances, setBalances] = useState<{ [key: string]: number }>(() => {
+    const savedBalances = localStorage.getItem('balances');
+    return savedBalances ? JSON.parse(savedBalances) : {};
+  });
+
+  const [balanceHistories, setBalanceHistories] = useState<{ [key: string]: any[] }>(() => {
+    const savedHistories = localStorage.getItem('balanceHistories');
+    return savedHistories ? JSON.parse(savedHistories) : {};
+  });
+
+
+  
+  const [globalBalance, setGlobalBalance] = useState<number>(0)
 
   useEffect(() => {
-    const storedData = localStorage.getItem('balanceData');
-    if (storedData) {
-      const { balance: storedBalance, balanceHistory: storedBalanceHistory } = JSON.parse(storedData);
-      dispatch({ type: 'UNDO', amount: storedBalance });
-      setBalanceHistory(storedBalanceHistory);
+    if (Object.values(balances).length > 0) {
+      const value = Object.values(balances).reduce((a,b) => a + b);
+    setGlobalBalance(value);
     }
-    setIsFirstRender(false);
-  }, []);
+    
+  }, [balances])
 
-  useEffect(() => {
-    if (!isFirstRender) { 
-      localStorage.setItem('balanceData', JSON.stringify({ balance, balanceHistory }));
-    }
-  }, [balance, balanceHistory, isFirstRender]);
+  const handleAddBalance = (name: string) => {
+    setBalances({ ...balances, [name]: 0 });
+    setBalanceHistories({ ...balanceHistories, [name]: [] }); // Add an empty array for the new balance
+  };
 
+  const dispatch = (key: string, action: BalanceAction) => {
+    setBalances((prev) => {
+      const updated = { ...prev };
+      switch (action.type) {
+        case 'ADD':
+          updated[key] = (updated[key] || 0) + action.amount;
+          break;
+        case 'SUBTRACT':
+          updated[key] = (updated[key] || 0) - action.amount;
+          break;
+        case 'UNDO':
+          updated[key] = action.amount;
+          break;
+        default:
+          break;
+      }
+      localStorage.setItem('balances', JSON.stringify(updated));
+      return updated;
+    });
 
+    setBalanceHistories((prev) => {
+      const updated = { ...prev };
+
+      
+      updated[key] = [...(updated[key] || []), { action: {...action, amount: action.type === 'SUBTRACT' ? -action.amount : action.amount}, saldo: balances[key] + (action.type === 'SUBTRACT' ? -action.amount : action.amount) }];
+      localStorage.setItem('balanceHistories', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const deleteBalance = (key: string) => {
+    setBalances((prevBalances) => {
+      const updatedBalances = { ...prevBalances };
+      delete updatedBalances[key];
+      localStorage.setItem('balances', JSON.stringify(updatedBalances));
+      return updatedBalances;
+    });
+
+    setBalanceHistories((prevHistories) => {
+      const updatedHistories = { ...prevHistories };
+      delete updatedHistories[key];
+      localStorage.setItem('balanceHistories', JSON.stringify(updatedHistories));
+      return updatedHistories;
+    });
+  };
 
   const value: BalanceContextType = {
-    balance,
-    balanceHistory,
-    costs,
-    setCosts,
-    income,
-    setIncome,
-    stepsAmount,
-    setStepsAmount,
+    balances,
+    balanceHistories,
     dispatch,
-    setBalanceHistory,
+    handleAddBalance,
+    globalBalance,
+    deleteBalance,
   };
 
   return <BalanceContext.Provider value={value}>{children}</BalanceContext.Provider>;

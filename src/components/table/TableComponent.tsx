@@ -10,7 +10,7 @@ interface TableComponentProps {
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({ page, pages, items, setPage }) => {
-  
+  console.log(items)
   return (
     <>
     <Table className="max-w-[300px] mx-auto text-center " removeWrapper aria-label="Example static collection table"
@@ -20,7 +20,7 @@ const TableComponent: React.FC<TableComponentProps> = ({ page, pages, items, set
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="warning"
           page={page}
           total={pages}
           onChange={(page) => setPage(page)}
@@ -37,9 +37,9 @@ const TableComponent: React.FC<TableComponentProps> = ({ page, pages, items, set
       </TableHeader>
       <TableBody emptyContent={"No rows to display."} items={items}>
       {items.map((item: BalanceHistory, index) => (
-        <TableRow className='' key={index} style={{ backgroundColor: item.change > 0 ? 'rgba(50, 205, 50, 0.2)' : 'rgba(255, 99, 71, 0.2)' }}>
+        <TableRow className='' key={index} style={{ backgroundColor: item.action.amount > 0 ? 'rgba(50, 205, 50, 0.2)' : 'rgba(255, 99, 71, 0.2)' }}>
           <TableCell>{item.saldo}</TableCell>
-          <TableCell>{item.change}</TableCell>
+          <TableCell>{item.action.amount}</TableCell>
         </TableRow>
       ))}
       </TableBody>
