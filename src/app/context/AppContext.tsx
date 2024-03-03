@@ -10,7 +10,7 @@ interface BalanceContextType {
   globalBalance: number;
   deleteBalance: (key: string) => void;
 }
-
+console.log(true)
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const useBalanceContext = (): BalanceContextType => {
