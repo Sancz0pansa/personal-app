@@ -10,7 +10,7 @@ interface BalanceContextType {
   globalBalance: number;
   deleteBalance: (key: string) => void;
 }
-console.log(true)
+
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export const useBalanceContext = (): BalanceContextType => {
@@ -23,7 +23,10 @@ export const useBalanceContext = (): BalanceContextType => {
 
 export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [balances, setBalances] = useState<{ [key: string]: number }>(() => {
-    const savedBalances = localStorage.getItem('balances');
+    
+      const savedBalances = localStorage.getItem('balances');
+    
+    
     return savedBalances ? JSON.parse(savedBalances) : {};
   });
 
