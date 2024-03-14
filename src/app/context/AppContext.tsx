@@ -23,16 +23,19 @@ export const useBalanceContext = (): BalanceContextType => {
 
 export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [balances, setBalances] = useState<{ [key: string]: number }>(() => {
-    
+    if (typeof localStorage !== 'undefined') {
       const savedBalances = localStorage.getItem('balances');
-    
-    
     return savedBalances ? JSON.parse(savedBalances) : {};
+    }
+    return ;
   });
 
   const [balanceHistories, setBalanceHistories] = useState<{ [key: string]: any[] }>(() => {
-    const savedHistories = localStorage.getItem('balanceHistories');
-    return savedHistories ? JSON.parse(savedHistories) : {};
+    if (typeof localStorage !== 'undefined') {
+      const savedHistories = localStorage.getItem('balanceHistories');
+      return savedHistories ? JSON.parse(savedHistories) : {};
+    }
+    return ;
   });
 
 
