@@ -38,7 +38,7 @@ export const BalanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return ;
   });
 
-
+console.log(true)
   
   const [globalBalance, setGlobalBalance] = useState<number>(0)
 
